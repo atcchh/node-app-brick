@@ -13,7 +13,6 @@ function Database(dbname, host, port) {
 }
 Database.prototype = {
         getConnection : function() {
-                console.log(this._dbname);
                 if(!this._promise ) {
                         var db = new Db(this._dbname, new Server(this._host || HOST,  this._port || PORT, {}),{w:1});
                         this._promise = Q.fcall(function(){
