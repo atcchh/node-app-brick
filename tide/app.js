@@ -1,9 +1,10 @@
 var Database = require("node-forceps").DatabasePromise
 var cronParser = require('cron-parser');
 var Q = require("q");
-var screenshotJob = require('./screenshotJob.js').screenshotJob
+var screenshotJob = require('./job/screenshotJob.js').screenshotJob
+var createAndKeepLufaxSessionCookie = require('./job/createAndKeepLufaxSessionCookie.js')
 
-var tideDB = new Database("tideDB8");
+var tideDB = new Database("tideDB12");
 var interval = 1000 * 1; //30s
 var i = 100;
 
@@ -13,10 +14,6 @@ var schedule = function(job){
 		schedule(job);
 	}, interval);
 }
-
-tideDB.getCollection("job").update(1424074392219,{status:"done"});
-// tideDB.getCollection("job_detail").insert({type:"screenshotJob", script:"", jobId:jobId});
-// tideDB.getCollection("job").insert({name:"cango-test3", cron : "*/3 * * * * *", status:"done", id:jobId});
 
 
 schedule(function() {
@@ -37,14 +34,17 @@ schedule(function() {
 						}).then(function(jobDetails){ // runt job
 							var jobDetail = jobDetails[0];
 							var deferred = Q.defer();
-							
-							screenshotJob(jobDetails,function(err){
-			                    if(err) {
-			                        deferred.reject(new Error(err));
-			                    } else {
-			                        deferred.resolve(jobDetail);
-			                    }
-							});
+							if(jobDetails.type == 'createAndKeepLufaxSessionCookie') {
+								createAndKeepLufaxSessionCookie(jobDetail);
+							} else {
+								screenshotJob(jobDetails,function(err){
+				                    if(err) {
+				                        deferred.reject(new Error(err));
+				                    } else {
+				                        deferred.resolve(jobDetail);
+				                    }
+								});
+							}
 							
 							return deferred.promise;
 
