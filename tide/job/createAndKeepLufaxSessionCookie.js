@@ -35,10 +35,13 @@ var creatAndKeepLufaxSession = function(){
 	}
 
 	var lufaxDB = new Database("lufaxDB");
-	var collection = lufaxDB.getCollection("loginCookie");
+
+	var collection = lufaxDB.getCollection("loginCookie4");
+
 	var prefixIMVC = '/tmp/';
 
 	var createCookie = function() {
+
 		https.get("https://user.lufax.com/user/captcha/captcha.jpg?source=login&_=" + new Date().getTime(), function(res) {
 			var imvc = getCookie(res,'IMVC');
 			var buffer = new Buffer(0, 'binary');
@@ -58,6 +61,10 @@ var creatAndKeepLufaxSession = function(){
 					.then(function(data) {
 						console.log('000000000000000000000000000000000');
 						var jsonData = JSON.parse(data);
+						if(!jsonData.Result) {
+							console.log("parse issue : " + data);
+							return;
+						}
 						// login www.lufax.com
 						var optionsLogin = {
 							'host':"user.lufax.com",//远端服务器域名
@@ -79,6 +86,7 @@ var creatAndKeepLufaxSession = function(){
 							cookie.lufaxSID = _lufaxSID;
 							cookie.createTime = new Date();
 							cookie.expireTime = new Date(new Date().getTime() + 1000 * 60 * 60 * 6);
+							console.log(cookie);
 							collection.insert(cookie);
 						});
 						loginRequest.write('');
@@ -89,7 +97,9 @@ var creatAndKeepLufaxSession = function(){
 		});
 	}
 	collection.findAll().then(function(cookies){
+
 		if(cookies.length) { 		// the cookie is exists
+
 			cookies.sort(function(cookie1, cookie2){
 				return cookie1.expireTime.getTime() - cookie2.expireTime.getTime();
 			})
@@ -97,8 +107,8 @@ var creatAndKeepLufaxSession = function(){
 			if(lastCookie.expireTime.getTime() < new Date().getTime()) {
 				createCookie();	
 			} else {
-			// update the keep session.gif
-			var lufaxSID = lastCookie.lufaxSID;
+				// update the keep session.gif
+				var lufaxSID = lastCookie.lufaxSID;
 				var keepSessionRequest = https.request({'host':'user.lufax.com',//远端服务器域名
 					'port':443,//远端服务器端口号
 					'method':'GET',
@@ -121,3 +131,4 @@ var creatAndKeepLufaxSession = function(){
 }
 
 module.exports.creatAndKeepLufaxSession = creatAndKeepLufaxSession;
+// creatAndKeepLufaxSession();

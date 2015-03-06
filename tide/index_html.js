@@ -1,21 +1,64 @@
-var fs = require('fs');
-var screenshot = function(page, url, fileName, callback) {
-    page.viewportSize = { width: 320, height: 480 };
+// phantomjs lufax.js
+//  1 : url
+//  2 : filePath
+//  2 : width
+//  3 : height
+//  5   lazyTime
+//  4 : cookie
+
+
+var page = require('webpage').create();
+var system = require('system')
+
+var argsLength = system.args.length;
+var url;
+var filePath;
+var width = 1100;
+var height = 2000;
+var lazyTime = 2000;
+var lufaxSID;
+
+if(argsLength <= 2) {
+  console.log("miss the path info");
+  phantom.exit(1);
+} else {
+  url = system.args[1]
+  filePath = system.args[2]
+}
+if(argsLength>=3) {
+  width = system.args[3]
+}
+if(argsLength>=4) {
+  height = system.args[4]
+}
+
+if(argsLength>=5) {
+  lazyTime = system.args[5]
+}
+if(argsLength>=6) {
+  lufaxSID = system.args[6]
+}
+
+var screenshot = function(page, url, fileName) {
+    page.viewportSize = { width: width, height: height };
+    if(lufaxSID) {
+      page.customHeaders = {
+          'Cookie':'_lufaxSID="' + lufaxSID + '"'
+      }    
+    }
+
     page.open(url, function (status) {
         if (status !== 'success') {
             console.log('Unable to access the network!');
         } else {
+          window.setTimeout(function()  {//延迟截图
             page.render(fileName);
-        }
-        if(callback) {
-            callback();
+            page.close();
+          }, lazyTime);  
+          // page.render(fileName);
         }
     });
 }
 
-var page = require('webpage').create();
-screenshot(page,'http://www.lufax.com', '1.png', function() {
-    screenshot(page, 'http://www.lufax.com','2.png', function() {
-        page.exit();
-    });
-});
+
+screenshot(page,url, filePath);  

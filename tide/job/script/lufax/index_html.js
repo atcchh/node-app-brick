@@ -1,25 +1,52 @@
-var page = require('webpage').create();
+// phantomjs lufax.js
+//  1 : url
+//  2 : filePath
+//  2 : width
+//  3 : height
+//  5   lazyTime
+//  4 : cookie
 
-var format = function(fmt, date) { //author: meizz   
-    var o = {   
-      "M+" : date.getMonth()+1,                 //月
-      "d+" : date.getDate(),                    //日
-      "h+" : date.getHours(),                   //小时
-      "m+" : date.getMinutes(),                 //分
-      "s+" : date.getSeconds(),                 //秒
-      "q+" : Math.floor((date.getMonth()+3)/3), //季度
-      "S"  : date.getMilliseconds()             //毫秒
-    };   
-    if(/(y+)/.test(fmt))   
-      fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
-    for(var k in o)   
-      if(new RegExp("("+ k +")").test(fmt))   
-    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-    return fmt;   
-}  
+
+var page = require('webpage').create();
+var system = require('system')
+
+var argsLength = system.args.length;
+var url;
+var filePath;
+var width = 1100;
+var height = 2000;
+var lazyTime = 2000;
+var lufaxSID;
+
+if(argsLength <= 2) {
+  console.log("miss the path info");
+  phantom.exit(1);
+} else {
+  url = system.args[1]
+  filePath = system.args[2]
+}
+if(argsLength>=3) {
+  width = system.args[3]
+}
+if(argsLength>=4) {
+  height = system.args[4]
+}
+
+if(argsLength>=5) {
+  lazyTime = system.args[5]
+}
+if(argsLength>=6) {
+  lufaxSID = system.args[6]
+}
 
 var screenshot = function(page, url, fileName) {
-    page.viewportSize = { width: 1100, height: 2000 };
+    page.viewportSize = { width: width, height: height };
+    if(lufaxSID) {
+      page.customHeaders = {
+          'Cookie':'_lufaxSID="' + lufaxSID + '"'
+      }    
+    }
+
     page.open(url, function (status) {
         if (status !== 'success') {
             console.log('Unable to access the network!');
@@ -27,17 +54,11 @@ var screenshot = function(page, url, fileName) {
           window.setTimeout(function()  {//延迟截图
             page.render(fileName);
             page.close();
-          }, 2000);  
+          }, lazyTime);  
           // page.render(fileName);
         }
     });
 }
 
-var prefix = "/tmp/screenshot"
-var groupName = "lufax"
-var categoryName = "index_html"
-var folderName = format("yyyyMM", new Date());
-var fileName = format("yyyyMMddhhmmss",new Date()) + ".png";
 
-// console.log("------------------------------------=");
-screenshot(page,'http://www.lufax.com', prefix + "/" + groupName + "/" + categoryName + "/" + folderName + "/" + fileName);  
+screenshot(page,url, filePath);  

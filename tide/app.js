@@ -4,7 +4,7 @@ var Q = require("q");
 var screenshotJob = require('./job/screenshotJob.js').screenshotJob
 var createAndKeepLufaxSessionCookie = require('./job/createAndKeepLufaxSessionCookie.js')
 
-var tideDB = new Database("tideDB12");
+var tideDB = new Database("tideDB");
 var interval = 1000 * 1; //30s
 var i = 100;
 
@@ -34,10 +34,11 @@ schedule(function() {
 						}).then(function(jobDetails){ // runt job
 							var jobDetail = jobDetails[0];
 							var deferred = Q.defer();
-							if(jobDetails.type == 'createAndKeepLufaxSessionCookie') {
+							if(jobDetail.type == 'createAndKeepLufaxSessionCookie') {
+								console.log("run createAndKeepLufaxSessionCookie");
 								createAndKeepLufaxSessionCookie(jobDetail);
 							} else {
-								screenshotJob(jobDetails,function(err){
+								screenshotJob(jobDetail,function(err){
 				                    if(err) {
 				                        deferred.reject(new Error(err));
 				                    } else {
