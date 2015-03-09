@@ -21,7 +21,8 @@ var Database = require("node-forceps").DatabasePromise
 
 
 
-var creatAndKeepLufaxSession = function(){
+var createAndKeepLufaxSessionCookie = function(){
+	console.log("start createAndKeepLufaxSessionCookie");
 	var getCookie = function(response, cookieName) {
 		var cookies = response.headers['set-cookie'];
 		for(var index =0; index < cookies.length; index++) {
@@ -36,7 +37,7 @@ var creatAndKeepLufaxSession = function(){
 
 	var lufaxDB = new Database("lufaxDB");
 
-	var collection = lufaxDB.getCollection("loginCookie4");
+	var collection = lufaxDB.getCollection("loginCookie");
 
 	var prefixIMVC = '/tmp/';
 
@@ -52,14 +53,13 @@ var creatAndKeepLufaxSession = function(){
 				// write the captcha to temp file
 				fs.writeFile( prefixIMVC + imvc +'.png',buffer, function() {
 					httpUtils.uploadFile('http://api.ruokuai.com/create.json',{
-							'username': 'rfvbgtyuxx7 ',
+							'username': 'rfvbgtyuxx7',
 							'password': '60B711EC4CD9F45E65151F487EFC02D6',
 							'typeid':'3040',
 							'softid': '6865',
 							'softkey': 'c009a96f01a622653fea46e324a3d4ce'
 						}, prefixIMVC + imvc +'.png')
 					.then(function(data) {
-						console.log('000000000000000000000000000000000');
 						var jsonData = JSON.parse(data);
 						if(!jsonData.Result) {
 							console.log("parse issue : " + data);
@@ -130,5 +130,5 @@ var creatAndKeepLufaxSession = function(){
 	})
 }
 
-module.exports.creatAndKeepLufaxSession = creatAndKeepLufaxSession;
+module.exports.createAndKeepLufaxSessionCookie = createAndKeepLufaxSessionCookie;
 // creatAndKeepLufaxSession();

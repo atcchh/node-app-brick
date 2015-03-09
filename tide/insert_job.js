@@ -5,28 +5,52 @@ var Q = require("q");
 var tideDB = new Database("tideDB");
 
 var jobId = new Date().getTime(); 
+// tideDB.getCollection("job").insert(
+// 	{
+// 		name:"lufax-my-acount", 
+// 		cron : "0/5 * * * * *", 
+// 		status:"done", 
+// 		id:jobId, 
+// 		type:"screenshotJob",
+// 		scriptPath:"./job/script/lufax/index_html.js" 
+// 	}
+// );
+
+// tideDB.getCollection("job_detail").insert(
+// 	{
+// 		jobId:jobId,
+//      jobName:"lufax-my-acount", 
+// 		phantomjs_config : '--ssl-protocol=any',
+// 		type:"screenshotJob",
+// 		scriptPath:"./job/script/lufax/index_html.js",
+// 		url:"https://my.lufax.com/my/account",
+// 		prefixPath:"/lufax/my-account",
+// 		width:"1100",
+// 		height:"2000",
+// 		isLogin:true,
+// 	}
+// );
+
+///////////////////////////////////////////////
+/// insert the ruo kuai 
+///////////////////////////////////////////////
+
 tideDB.getCollection("job").insert(
 	{
-		name:"lufax-my-acount", 
-		cron : "0/5 * * * * *", 
+		jobName:"lufax-create-session", 
+		cron : "* * * * * *", 
 		status:"done", 
 		id:jobId, 
-		type:"screenshotJob",
-		scriptPath:"./job/script/lufax/index_html.js" 
+		type:"createAndKeepLufaxSessionCookie",
+		scriptPath:"./job/createAndKeepLufaxSessionCookie.js" 
 	}
 );
 
 tideDB.getCollection("job_detail").insert(
 	{
 		jobId:jobId,
-		phantomjs_config : '--ssl-protocol=any',
-		type:"screenshotJob",
-		scriptPath:"./job/script/lufax/index_html.js",
-		url:"https://my.lufax.com/my/account",
-		prefixPath:"/lufax/my-account",
-		width:"1100",
-		height:"2000",
-		isLogin:true,
+		name:"lufax-create-session",
+		type:"createAndKeepLufaxSessionCookie"
 	}
 );
 

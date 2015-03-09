@@ -54,6 +54,7 @@ var screenshot = function(page, url, fileName) {
           window.setTimeout(function()  {//延迟截图
             page.render(fileName);
             page.close();
+            return phantom.exit();
           }, lazyTime);  
           // page.render(fileName);
         }

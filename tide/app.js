@@ -26,32 +26,60 @@ schedule(function() {
 					var jobId = job.id;
 					var lastRuntime = new Date();
 					var nextRuntime = getNextRuntime(job);
-					tideDB.getCollection("job").update(jobId, {status:"running", lastRunTime : lastRuntime, nextRuntime:nextRuntime})
-						.then(function(){
-							console.log(job.name + " updat statue to running : " + job.id + "time : " + new Date() + "the job lastRunTime [" + job.lastRunTime + "]");	
-							// get the job detail
-							return tideDB.getCollection("job_detail").find({jobId: job.id});
-						}).then(function(jobDetails){ // runt job
+					tideDB.getCollection("job_detail").find({jobId: jobId})
+						.then(function(jobDetails){
 							var jobDetail = jobDetails[0];
-							var deferred = Q.defer();
-							if(jobDetail.type == 'createAndKeepLufaxSessionCookie') {
-								console.log("run createAndKeepLufaxSessionCookie");
-								createAndKeepLufaxSessionCookie(jobDetail);
-							} else {
-								screenshotJob(jobDetail,function(err){
-				                    if(err) {
-				                        deferred.reject(new Error(err));
-				                    } else {
-				                        deferred.resolve(jobDetail);
-				                    }
+							return tideDB.getCollection("job").update(jobId, {status:"running", lastRunTime : lastRuntime, nextRuntime:nextRuntime})
+								.then(function(){
+									var deferred = Q.defer();
+									if(jobDetail.type == 'createAndKeepLufaxSessionCookie') {
+
+										Q.fcall(function(){
+											createAndKeepLufaxSessionCookie();
+										});
+										deferred.resolve(jobDetail);
+									} else {
+										screenshotJob(jobDetail,function(err){
+						                    if(err) {
+						                        deferred.reject(new Error(err));
+						                    } else {
+						                        deferred.resolve(jobDetail);
+						                    }
+										});
+									}
+									
+									return deferred.promise;
 								});
-							}
+						// })
+					// tideDB.getCollection("job").update(jobId, {status:"running", lastRunTime : lastRuntime, nextRuntime:nextRuntime})
+					// 	.then(function(){
+					// 		console.log(job.name + " updat statue to running : " + jobId + "time : " + new Date() + "the job lastRunTime [" + job.lastRunTime + "]");	
+					// 		// get the job detail
+					// 		return tideDB.getCollection("job_detail").find({jobId: jobId});
+					// 	}).then(function(jobDetails){ // runt job
+					// 		var jobDetail = jobDetails[0];
+					// 		var deferred = Q.defer();
+					// 		console.log(jobDetail.type);
+					// 		if(jobDetail.type == 'createAndKeepLufaxSessionCookie') {
+					// 			console.log("run createAndKeepLufaxSessionCookie");
+					// 			// createAndKeepLufaxSessionCookie();
+					// 			deferred.resolve(jobDetail);
+					// 		} else {
+					// 			screenshotJob(jobDetail,function(err){
+				 //                    if(err) {
+				 //                        deferred.reject(new Error(err));
+				 //                    } else {
+				 //                        deferred.resolve(jobDetail);
+				 //                    }
+					// 			});
+					// 		}
 							
-							return deferred.promise;
+					// 		return deferred.promise;
 
 						}).then(function(jobDetail){
-							console.log(job.name + " updat statue to done    : " + job.id + "tiem : " + new Date());	
-							tideDB.getCollection("job").update(jobId, {status:"done"})
+
+							console.log(jobDetail.type + " updat statue to done    : " + jobDetail.jobId + "tiem : " + new Date());	
+							tideDB.getCollection("job").update(jobDetail.jobId, {status:"done"})
 						});
 				} 
 			}

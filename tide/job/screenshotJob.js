@@ -32,7 +32,6 @@ var screenshotJob = function(jobDetails, callBack) {
 		screenshotFile.tagetPath = prefixPath + "/" + targetMonth + "/" + fileName;
 
 		loginCookieCollection.findAll().then(function(cookies){
-
 			if(cookies.length) { 		// the cookie is exists
 
 				cookies.sort(function(cookie1, cookie2){
@@ -45,10 +44,6 @@ var screenshotJob = function(jobDetails, callBack) {
 		}).then(function(params){
 			var command = new PhantomjsCommand(params);
 			command.run().then(function(){
-				console.log("-------------------------------");
-				console.log("-------------------------------");
-				console.log("-------------------------------");
-				console.log("-------------------------------");
 				if(callBack) {
 					callBack(null);
 				}		
@@ -57,10 +52,6 @@ var screenshotJob = function(jobDetails, callBack) {
 	} else {
 		var command = new PhantomjsCommand(params);
 		command.run().then(function(){
-			console.log("-------------------------------");
-			console.log("-------------------------------");
-			console.log("-------------------------------");
-			console.log("-------------------------------");
 			if(callBack) {
 				callBack(null);
 			}		
