@@ -1,7 +1,9 @@
 var PhantomjsCommand = require("node-forceps").PhantomjsCommand;
 var dateUtils = require("node-forceps").dateUtils;
 var Database = require("node-forceps").DatabasePromise
-
+var lufaxDB = new Database("lufaxDB");
+var loginCookieCollection = lufaxDB.getCollection("loginCookie");
+var screenshotFileCollection = lufaxDB.getCollection("screenshot");
 
 var screenshotJob = function(jobDetails, callBack) {
 	var params = []
@@ -16,24 +18,23 @@ var screenshotJob = function(jobDetails, callBack) {
 	var prefixPath = jobDetails.prefixPath;
 	var targetMonth = dateUtils.format('yyyyMM', new Date());
 	var fileName = dateUtils.format('yyyyMMddhhmmss', new Date()) + ".png";
-	params.push("/tmp" + prefixPath + "/" + targetMonth + "/" + fileName);
+	params.push(prefixPath + "/" + targetMonth + "/" + fileName);
 	// params.push("1100");
 	params.push(jobDetails.width);
 	// params.push("2000");
 	params.push(jobDetails.height);
+	// params.push("2000")
+	params.push(jobDetails.lazyTime);
 
 	if(jobDetails.isLogin) {
 		// params.push("9cfcb4f2-1456-446e-a089-faf75beea963,xZzPgE444BcwhXbydpWUXsyfh81TZhBQmdQXTDNLzmdYgvFppUjH75QHw4Cos36bvwcYNuhSbSXY/aW4TK/gTQ==");
-		var lufaxDB = new Database("lufaxDB");
-		var loginCookieCollection = lufaxDB.getCollection("loginCookie");
-		var screenshotFileCollection = lufaxDB.getCollection("screenshot");
+		
 		var screenshotFile = {}
-		screenshotFile.filePath = "/tmp" + prefixPath + "/" + targetMonth + "/" + fileName;
+		screenshotFile.filePath = prefixPath + "/" + targetMonth + "/" + fileName;
 		screenshotFile.tagetPath = prefixPath + "/" + targetMonth + "/" + fileName;
 
 		loginCookieCollection.findAll().then(function(cookies){
 			if(cookies.length) { 		// the cookie is exists
-
 				cookies.sort(function(cookie1, cookie2){
 					return cookie1.expireTime.getTime() - cookie2.expireTime.getTime();
 				})
@@ -41,8 +42,23 @@ var screenshotJob = function(jobDetails, callBack) {
 				params.push(lastCookie.lufaxSID);
 			}
 			return params;
+		}).then(function(params){ // save the screen shot file
+			var screenshot = {};
+			screenshot.picture_group = jobDetails.jobName;
+			screenshot.created_at = new Date();
+			screenshot.filePath = params[3];
+			screenshot.width = jobDetails.width;
+			screenshot.height = jobDetails.height;
+			return screenshotFileCollection.insert(screenshot)
+				.then(function(){
+					return params;
+				})
+		}).then(function(params){ // close the db
+			lufaxDB.close();
+			return params;
 		}).then(function(params){
 			var command = new PhantomjsCommand(params);
+			console.log(params)
 			command.run().then(function(){
 				if(callBack) {
 					callBack(null);

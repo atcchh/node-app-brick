@@ -15,11 +15,13 @@ var http = require('http');
 var https = require('https');
 var parseCookies = require('cookie');
 var httpUtils = require('node-forceps').httpUtils
+var Q = require("q");
 
 var Path = require('path');
 var Database = require("node-forceps").DatabasePromise
-
-
+var lufaxDB = new Database("lufaxDB");
+var collection = lufaxDB.getCollection("loginCookie");
+var imvc ;
 
 var createAndKeepLufaxSessionCookie = function(){
 	console.log("start createAndKeepLufaxSessionCookie");
@@ -35,65 +37,95 @@ var createAndKeepLufaxSessionCookie = function(){
 		return null;
 	}
 
-	var lufaxDB = new Database("lufaxDB");
+	
 
-	var collection = lufaxDB.getCollection("loginCookie");
+	
 
 	var prefixIMVC = '/tmp/';
 
 	var createCookie = function() {
-
-		https.get("https://user.lufax.com/user/captcha/captcha.jpg?source=login&_=" + new Date().getTime(), function(res) {
-			var imvc = getCookie(res,'IMVC');
-			var buffer = new Buffer(0, 'binary');
-			res.on('data', function (chunk) {
-				buffer = Buffer.concat([buffer, new Buffer(chunk,'binary')])
-			});
-			res.on('end', function(){ // 
-				// write the captcha to temp file
-				fs.writeFile( prefixIMVC + imvc +'.png',buffer, function() {
-					httpUtils.uploadFile('http://api.ruokuai.com/create.json',{
-							'username': 'rfvbgtyuxx7',
-							'password': '60B711EC4CD9F45E65151F487EFC02D6',
-							'typeid':'3040',
-							'softid': '6865',
-							'softkey': 'c009a96f01a622653fea46e324a3d4ce'
-						}, prefixIMVC + imvc +'.png')
-					.then(function(data) {
-						var jsonData = JSON.parse(data);
-						if(!jsonData.Result) {
-							console.log("parse issue : " + data);
-							return;
-						}
-						// login www.lufax.com
-						var optionsLogin = {
-							'host':"user.lufax.com",//远端服务器域名
-							'port':443,//远端服务器端口号
-							'method':'POST',
-							'path':'/user/login',//上传服务路径
-							'headers':{
-								'Content-Type':'application/x-www-form-urlencoded',
-								'Connection':'close',
-								'Cookie':'IMVC='+imvc
-							}
-						};
-						var loginRequest = https.request(optionsLogin, function(loginResponse){
-							console.log("login success");
-							_lufaxSID = getCookie(loginResponse,'_lufaxSID');
-							console.log(_lufaxSID);
-							// fs.appendFileSync(lufaxConfigFile,'www.lufax.com:::'+new Date().getTime() + ':::'+new Date().getTime() + ':::' + _lufaxSID + '\n');
-							var cookie = {}
-							cookie.lufaxSID = _lufaxSID;
-							cookie.createTime = new Date();
-							cookie.expireTime = new Date(new Date().getTime() + 1000 * 60 * 60 * 6);
-							console.log(cookie);
-							collection.insert(cookie);
-						});
-						loginRequest.write('');
-						loginRequest.end('password=830A5C7ED170D32979DD9904C8DC0F6D3E6477B5B3CD83686BA069B406ECCB311E065E700A5F0EC2AD5C8009AB4C79833D4579DC4657752758CF793F9D12FD56A60196B68E71850D1493B64053168C3A6C983F53290929AE1E7B85E5D6DC3FB8F010F518526B790F31AF52C9B845189EA44A690D809B2B33C77697E6EDCD0E2B&userNameLogin=oneforce&pwd=************&validNum='+jsonData.Result);
-					});
+		Q.fcall(function(){
+			var IMVCdeferred = Q.defer();
+			https.get("https://user.lufax.com/user/captcha/captcha.jpg?source=login&_=" + new Date().getTime(), function(res) {			
+				imvc = getCookie(res,'IMVC');
+				var buffer = new Buffer(0, 'binary');
+				res.on('data', function (chunk) {
+					buffer = Buffer.concat([buffer, new Buffer(chunk,'binary')])
+				}).on('error', function(err){
+					console.log("parse the imvc file issue");
+					IMVCdeferred.reject(err);
+				}).on('end', function(){ // 
+					IMVCdeferred.resolve(buffer);
 				});
+			}).on('error', function(e) {
+				console.log("get the imvc file issue");
+			  	IMVCdeferred.reject(e);
 			});
+
+			return IMVCdeferred.promise;
+		}).then(function(buffer){
+			var fileDeferred = Q.defer();
+			fs.writeFile( prefixIMVC + imvc +'.png',buffer, function(err) {
+				if(err) {
+					fileDeferred.reject(err);	
+				} else {
+					fileDeferred.resolve();
+				}
+			})
+			console.log(prefixIMVC + imvc +'.png')
+			return fileDeferred;
+			// return Q.nfcall(fs.writeFile, [prefixIMVC + imvc +'.png',buffer]);
+			// return Q.nfcall(FS.readFile, "foo.txt", "utf-8");
+		}).then(function(){
+			console.log("start to update the file");
+			return httpUtils.uploadFile('http://api.ruokuai.com/create.json',{
+				'username': 'rfvbgtyuxx7',
+				'password': '60B711EC4CD9F45E65151F487EFC02D6',
+				'typeid':'3040',
+				'softid': '6865',
+				'softkey': 'c009a96f01a622653fea46e324a3d4ce'
+			}, prefixIMVC + imvc +'.png')
+		}).then(function(data){
+			console.log("get the captcha success " + data + " try to login");
+			var cookieDeferred = Q.defer();
+			var jsonData = JSON.parse(data);
+			if(!jsonData.Result) {
+				console.log("parse issue : " + data);
+				return;
+			}
+			var optionsLogin = {
+				'host':"user.lufax.com",//远端服务器域名
+				'port':443,//远端服务器端口号
+				'method':'POST',
+				'path':'/user/login',//上传服务路径
+				'headers':{
+					'Content-Type':'application/x-www-form-urlencoded',
+					'Connection':'close',
+					'Cookie':'IMVC='+imvc
+				}
+			};
+			var loginRequest = https.request(optionsLogin, function(loginResponse){
+				console.log("login success");
+				_lufaxSID = getCookie(loginResponse,'_lufaxSID');
+				console.log(_lufaxSID);
+				// fs.appendFileSync(lufaxConfigFile,'www.lufax.com:::'+new Date().getTime() + ':::'+new Date().getTime() + ':::' + _lufaxSID + '\n');
+				var cookie = {}
+				cookie.lufaxSID = _lufaxSID;
+				cookie.createTime = new Date();
+				cookie.expireTime = new Date(new Date().getTime() + 1000 * 60 * 60 * 6);
+				console.log(cookie);
+				cookieDeferred.resolve(cookie);
+			});
+			loginRequest.write('');
+			loginRequest.end('password=830A5C7ED170D32979DD9904C8DC0F6D3E6477B5B3CD83686BA069B406ECCB311E065E700A5F0EC2AD5C8009AB4C79833D4579DC4657752758CF793F9D12FD56A60196B68E71850D1493B64053168C3A6C983F53290929AE1E7B85E5D6DC3FB8F010F518526B790F31AF52C9B845189EA44A690D809B2B33C77697E6EDCD0E2B&userNameLogin=oneforce&pwd=************&validNum='+jsonData.Result);
+			return cookieDeferred.promise;
+		}).then(function(cookie){
+			collection.insert(cookie);
+			return
+		}).then(function(){
+			lufaxDB.close();
+		}).fail(function(err){
+			console.log(err)
 		});
 	}
 	collection.findAll().then(function(cookies){
@@ -108,6 +140,7 @@ var createAndKeepLufaxSessionCookie = function(){
 				createCookie();	
 			} else {
 				// update the keep session.gif
+				lufaxDB.close();
 				var lufaxSID = lastCookie.lufaxSID;
 				var keepSessionRequest = https.request({'host':'user.lufax.com',//远端服务器域名
 					'port':443,//远端服务器端口号
@@ -117,8 +150,7 @@ var createAndKeepLufaxSessionCookie = function(){
 						'Connection':'close',
 						'Cookie':'_lufaxSID="' + lufaxSID + '"'
 					}}, function(keepSessionResponse){
-						keepSessionRequest.end();
-						keepSessionResponse.on('close', function(){
+						keepSessionResponse.on('end', function(){
 							console.log('response close');
 						});
 					});
@@ -130,5 +162,5 @@ var createAndKeepLufaxSessionCookie = function(){
 	})
 }
 
-module.exports.createAndKeepLufaxSessionCookie = createAndKeepLufaxSessionCookie;
-// creatAndKeepLufaxSession();
+//module.exports.createAndKeepLufaxSessionCookie = createAndKeepLufaxSessionCookie;
+createAndKeepLufaxSessionCookie();

@@ -25,23 +25,26 @@ if(argsLength <= 2) {
   url = system.args[1]
   filePath = system.args[2]
 }
-if(argsLength>=3) {
+if(argsLength>=4) {
   width = system.args[3]
 }
-if(argsLength>=4) {
+if(argsLength>=5) {
   height = system.args[4]
 }
 
-if(argsLength>=5) {
+if(argsLength>=6) {
   lazyTime = system.args[5]
 }
-if(argsLength>=6) {
+if(argsLength>=7) {
   lufaxSID = system.args[6]
 }
+
+
 
 var screenshot = function(page, url, fileName) {
     page.viewportSize = { width: width, height: height };
     if(lufaxSID) {
+
       page.customHeaders = {
           'Cookie':'_lufaxSID="' + lufaxSID + '"'
       }    
@@ -62,4 +65,4 @@ var screenshot = function(page, url, fileName) {
 }
 
 
-screenshot(page,url, filePath);  
+screenshot(page, url, filePath);  
