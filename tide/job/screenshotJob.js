@@ -43,6 +43,7 @@ var screenshotJob = function(jobDetails, callBack) {
 			}
 			return params;
 		}).then(function(params){ // save the screen shot file
+			console.log('insert screen shot');
 			var screenshot = {};
 			screenshot.picture_group = jobDetails.jobName;
 			screenshot.created_at = new Date();
@@ -57,6 +58,7 @@ var screenshotJob = function(jobDetails, callBack) {
 			lufaxDB.close();
 			return params;
 		}).then(function(params){
+	                console.log('run phantomjs');
 			var command = new PhantomjsCommand(params);
 			console.log(params)
 			command.run().then(function(){
