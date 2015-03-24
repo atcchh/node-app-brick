@@ -32,6 +32,9 @@ Database.prototype = {
         },
         getCollection : function(collectionName) {
                 return new Collection(this, collectionName);
+        },
+        close: function() {
+            
         }
 };
 
@@ -88,6 +91,7 @@ Collection.prototype = {
                         if(field != 'id') {
                             data[0][field] = newData[field];
                         }
+
                     };
 
                     

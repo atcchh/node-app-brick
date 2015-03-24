@@ -59,9 +59,6 @@ var screenshot = function(page, url, fileName) {
             page.close();
             return phantom.exit();
           }, lazyTime);  
-          //page.render(fileName);
-          //page.close();
-          //return phantom.exit();
         }
     });
 }

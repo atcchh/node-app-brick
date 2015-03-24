@@ -23,6 +23,6 @@ page.open(url,function(status) {
         var nextUrl = lufaxPageList.pageList1[index+1].url;
             saveUrlToPicture.apply(null,[nextPicture, nextUrl, index+1] );
         }else {
-            return phantom.exit();  
+            return phantom.exit();
         }
 });

@@ -2,6 +2,7 @@ var PhantomjsCommand = require("node-forceps").PhantomjsCommand;
 var dateUtils = require("node-forceps").dateUtils;
 var Database = require("node-forceps").DatabasePromise
 var lufaxDB = new Database("lufaxDB");
+var tideDB = new Database("tideDB");
 var loginCookieCollection = lufaxDB.getCollection("loginCookie");
 var screenshotFileCollection = lufaxDB.getCollection("screenshot");
 
@@ -68,13 +69,39 @@ var screenshotJob = function(jobDetails, callBack) {
 			});
 		})
 	} else {
-		var command = new PhantomjsCommand(params);
-		command.run().then(function(){
-			if(callBack) {
-				callBack(null);
-			}		
-		});
+		console.log('insert screen shot');
+		var screenshot = {};
+		screenshot.picture_group = jobDetails.jobName;
+		screenshot.created_at = new Date();
+		screenshot.filePath = params[3];
+		screenshot.width = jobDetails.width;
+		screenshot.height = jobDetails.height;
+		return screenshotFileCollection.insert(screenshot)
+			.then(function(){
+				return params;
+			}).then(function(){
+				lufaxDB.close();
+			}).then(function(){
+				var command = new PhantomjsCommand(params);
+				command.run().then(function(){
+					if(callBack) {
+						callBack(null);
+					}		
+				});				
+			})
 		
 	}
 }
-module.exports.screenshotJob = screenshotJob;
+var args = process.argv.slice(2);
+var jobid = args[0];
+tideDB.getCollection("job").find({id:jobid}).then(function(jobs){
+	console.log(jobs);
+	var job = jobs[0];
+	var jobDetail = job.jobDetail;
+	screenshotJob(jobDetail);
+}).then(function(){
+	console.log("end");
+	tideDB.close();
+}).fail(function(err){
+	console.log(err);
+})
