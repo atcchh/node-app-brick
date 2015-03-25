@@ -7,79 +7,23 @@ var jobId = new Date().getTime();
 
 
 
-jobId++;
-tideDB.getCollection("job").insert(
-	{
-		name:"lufax_index_login", 
-		cron : "0 0 */2 * * *", 
-		status:"done", 
-		id:jobId + "", 
-		command:"/usr/local/bin/node",
-		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
-		type : "lufax.screenshot",
-		jobDetail : {
-	     	jobName:"lufax_index_login", 
-			phantomjs_config : '--ssl-protocol=any',
-			type:"screenshotJob",
-			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://www.lufax.com",
-			prefixPath:"/tmp/lufax/index_login",
-			width:"1200",
-			height:"1200",
-			lazyTime:"2000",
-			isLogin:true
-		},
-		options: ""
-	}
-).then(function(){
-	console.log("insert the lufax_index_login");
-});
 
-jobId++;
 tideDB.getCollection("job").insert(
 	{
-		name:"lufax_list_all", 
-		cron : "0 1 */4 * * *", 
+		name:"xiaoniu88_index", 
+		cron : "0 0 0 * * *", 
 		status:"done", 
 		id:jobId + "", 
 		command:"/usr/local/bin/node",
 		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
 		type : "lufax.screenshot",
 		jobDetail : {
-	     	jobName:"lufax_list_all", 
+	     	jobName:"xiaoniu88_index", 
 			phantomjs_config : '--ssl-protocol=any',
 			type:"screenshotJob",
 			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://list.lufax.com/list/all",
-			prefixPath:"/tmp/lufax/list_all",
-			width:"1200",
-			height:"1200",
-			lazyTime:"2000",
-			isLogin:true
-		},
-		options: ""
-	}
-).then(function(){
-	console.log("insert the lufax_list_all");
-});
-
-jobId++;
-tideDB.getCollection("job").insert(
-	{
-		name:"lufax_list_anye", 
-		cron : "0 2 */4 * * *", 
-		status:"done", 
-		id:jobId + "", 
-		command:"/usr/local/bin/node",
-		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
-		type : "lufax.screenshot",
-		jobDetail : {
-	     	jobName:"lufax_list_anye", 
-			phantomjs_config : '--ssl-protocol=any',
-			type:"screenshotJob",
-			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://list.lufax.com/list/anye",
-			prefixPath:"/tmp/lufax/list_anye",
+			url:"http://www.xiaoniu88.com/portal/index",
+			prefixPath:"/tmp/xiaoniu88/index",
 			width:"1200",
 			height:"1200",
 			lazyTime:"2000",
@@ -88,28 +32,28 @@ tideDB.getCollection("job").insert(
 		options: ""
 	}
 ).then(function(){
-	console.log("insert the lufax_list_anye");
+	console.log("insert the xiaoniu88_index");
 });
-
-
 jobId++;
+
+
 
 tideDB.getCollection("job").insert(
 	{
-		name:"lufax_list_anye", 
-		cron : "0 3 */4 * * *", 
+		name:"xiaoniu88_product_listing", 
+		cron : "0 0 0 * * *", 
 		status:"done", 
 		id:jobId + "", 
 		command:"/usr/local/bin/node",
 		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
 		type : "lufax.screenshot",
 		jobDetail : {
-	     	jobName:"lufax_list_anyi", 
+	     	jobName:"xiaoniu88_product_listing", 
 			phantomjs_config : '--ssl-protocol=any',
 			type:"screenshotJob",
 			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://list.lufax.com/list/anyi",
-			prefixPath:"/tmp/lufax/list_anyi",
+			url:"http://www.xiaoniu88.com/product/listing",
+			prefixPath:"/tmp/xiaoniu88/product/listing",
 			width:"1200",
 			height:"1200",
 			lazyTime:"2000",
@@ -118,137 +62,27 @@ tideDB.getCollection("job").insert(
 		options: ""
 	}
 ).then(function(){
-	console.log("insert the lufax_list_anye");
+	console.log("insert the xiaoniu88_product_listing");
 });
+jobId++;
 
-jobId++;jobId++;
+
 tideDB.getCollection("job").insert(
 	{
-		name:"lufax_list_fuying", 
-		cron : "0 4 */4 * * *", 
+		name:"xiaoniu88_product_planning", 
+		cron : "0 0 0 * * *", 
 		status:"done", 
 		id:jobId + "", 
 		command:"/usr/local/bin/node",
 		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
 		type : "lufax.screenshot",
 		jobDetail : {
-	     	jobName:"lufax_list_fuying", 
+	     	jobName:"xiaoniu88_product_planning", 
 			phantomjs_config : '--ssl-protocol=any',
 			type:"screenshotJob",
 			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://list.lufax.com/list/fuying",
-			prefixPath:"/tmp/lufax/list_fuying",
-			width:"1200",
-			height:"1200",
-			lazyTime:"2000",
-			isLogin:true
-		},
-		options: ""
-	}
-).then(function(){
-	console.log("insert the lufax_list_fuying");
-});
-jobId++;
-tideDB.getCollection("job").insert(
-	{
-		name:"lufax_list_licai", 
-		cron : "0 4 */4 * * *", 
-		status:"done", 
-		id:jobId + "", 
-		command:"/usr/local/bin/node",
-		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
-		type : "lufax.screenshot",
-		jobDetail : {
-	     	jobName:"lufax_list_licai", 
-			phantomjs_config : '--ssl-protocol=any',
-			type:"screenshotJob",
-			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://list.lufax.com/list/licai",
-			prefixPath:"/tmp/lufax/list_licai",
-			width:"1200",
-			height:"1200",
-			lazyTime:"2000",
-			isLogin:true
-		},
-		options: ""
-	}
-).then(function(){
-	console.log("insert the lufax_list_licai");
-});
-jobId++;
-
-tideDB.getCollection("job").insert(
-	{
-		name:"lufax_lumi_index", 
-		cron : "0 5 */3 * * *", 
-		status:"done", 
-		id:jobId + "", 
-		command:"/usr/local/bin/node",
-		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
-		type : "lufax.screenshot",
-		jobDetail : {
-	     	jobName:"lufax_lumi_index", 
-			phantomjs_config : '--ssl-protocol=any',
-			type:"screenshotJob",
-			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://lumi.lufax.com/lumi/index",
-			prefixPath:"/tmp/lufax/lumi_index",
-			width:"1200",
-			height:"2000",
-			lazyTime:"2000",
-			isLogin:true
-		},
-		options: ""
-	}
-).then(function(){
-	console.log("insert the lufax_lumi_index");
-});
-
-jobId++;
-tideDB.getCollection("job").insert(
-	{
-		name:"lufax_my_acount", 
-		cron : "0 6 1 * * *", 
-		status:"done", 
-		id: jobId + "", 
-		command:"/usr/local/bin/node",
-		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
-		type : "lufax.screenshot",
-		jobDetail : {
-	     	jobName:"lufax_my_acount", 
-			phantomjs_config : '--ssl-protocol=any',
-			type:"screenshotJob",
-			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"https://my.lufax.com/my/account",
-			prefixPath:"/tmp/lufax/my_account",
-			width:"1200",
-			height:"1200",
-			lazyTime:"2000",
-			isLogin:true
-		},
-		options: ""
-	}
-).then(function(){
-	console.log("insert the lufax_my_acount");
-});
-jobId++;
-
-tideDB.getCollection("job").insert(
-	{
-		name:"lufax_help", 
-		cron : "0 0 1 1 * *", 
-		status:"done", 
-		id:jobId + "", 
-		command:"/usr/local/bin/node",
-		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
-		type : "lufax.screenshot",
-		jobDetail : {
-	     	jobName:"lufax_help", 
-			phantomjs_config : '--ssl-protocol=any',
-			type:"screenshotJob",
-			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"http://www.lufax.com/help/",
-			prefixPath:"/tmp/lufax/help",
+			url:"http://www.xiaoniu88.com/product/planning",
+			prefixPath:"/tmp/xiaoniu88/product/planning",
 			width:"1200",
 			height:"1200",
 			lazyTime:"2000",
@@ -257,26 +91,28 @@ tideDB.getCollection("job").insert(
 		options: ""
 	}
 ).then(function(){
-	console.log("insert the lufax_help");
+	console.log("insert the xiaoniu88_product_planning");
 });
-jobId++
+jobId++;
+
+
 
 tideDB.getCollection("job").insert(
 	{
-		name:"lufax_mobile", 
-		cron : "0 0 2 1 * *", 
+		name:"xiaoniu88_product_transfer", 
+		cron : "0 0 0 * * *", 
 		status:"done", 
 		id:jobId + "", 
 		command:"/usr/local/bin/node",
 		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
 		type : "lufax.screenshot",
 		jobDetail : {
-	     	jobName:"lufax_mobile", 
+	     	jobName:"xiaoniu88_product_transfer", 
 			phantomjs_config : '--ssl-protocol=any',
 			type:"screenshotJob",
 			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
-			url:"http://www.lufax.com/activity/app201307/index.html",
-			prefixPath:"/tmp/lufax/mobile",
+			url:"http://www.xiaoniu88.com/product/transfer",
+			prefixPath:"/tmp/xiaoniu88/product/transfer",
 			width:"1200",
 			height:"1200",
 			lazyTime:"2000",
@@ -285,5 +121,153 @@ tideDB.getCollection("job").insert(
 		options: ""
 	}
 ).then(function(){
-	console.log("insert the lufax_mobile");
+	console.log("insert the xiaoniu88_product_transfer");
 });
+jobId++;
+
+
+
+tideDB.getCollection("job").insert(
+	{
+		name:"xiaoniu88_login", 
+		cron : "0 0 0 */2 * *", 
+		status:"done", 
+		id:jobId + "", 
+		command:"/usr/local/bin/node",
+		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
+		type : "lufax.screenshot",
+		jobDetail : {
+	     	jobName:"xiaoniu88_login", 
+			phantomjs_config : '--ssl-protocol=any',
+			type:"screenshotJob",
+			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
+			url:"https://www.xiaoniu88.com/user/login",
+			prefixPath:"/tmp/xiaoniu88/login",
+			width:"1200",
+			height:"1200",
+			lazyTime:"2000",
+			isLogin:false
+		},
+		options: ""
+	}
+).then(function(){
+	console.log("insert the xiaoniu88_login");
+});
+jobId++;
+
+
+
+tideDB.getCollection("job").insert(
+	{
+		name:"xiaoniu88_register", 
+		cron : "0 0 0 */15 * *", 
+		status:"done", 
+		id:jobId + "", 
+		command:"/usr/local/bin/node",
+		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
+		type : "lufax.screenshot",
+		jobDetail : {
+	     	jobName:"xiaoniu88_register", 
+			phantomjs_config : '--ssl-protocol=any',
+			type:"screenshotJob",
+			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
+			url:"https://www.xiaoniu88.com/user/register",
+			prefixPath:"/tmp/xiaoniu88/register",
+			width:"1200",
+			height:"1200",
+			lazyTime:"2000",
+			isLogin:false
+		},
+		options: ""
+	}
+).then(function(){
+	console.log("insert the xiaoniu88_register");
+});
+jobId++;
+
+
+tideDB.getCollection("job").insert(
+	{
+		name:"xiaoniu88_help", 
+		cron : "0 0 0 */15 * *", 
+		status:"done", 
+		id:jobId + "", 
+		command:"/usr/local/bin/node",
+		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
+		type : "lufax.screenshot",
+		jobDetail : {
+	     	jobName:"xiaoniu88_help", 
+			phantomjs_config : '--ssl-protocol=any',
+			type:"screenshotJob",
+			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
+			url:"http://www.xiaoniu88.com/portal/help/index",
+			prefixPath:"/tmp/xiaoniu88/help",
+			width:"1200",
+			height:"1200",
+			lazyTime:"2000",
+			isLogin:false
+		},
+		options: ""
+	}
+).then(function(){
+	console.log("insert the xiaoniu88_help");
+});
+jobId++;
+
+
+tideDB.getCollection("job").insert(
+	{
+		name:"xiaoniu88_loan", 
+		cron : "0 0 0 */15 * *", 
+		status:"done", 
+		id:jobId + "", 
+		command:"/usr/local/bin/node",
+		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
+		type : "lufax.screenshot",
+		jobDetail : {
+	     	jobName:"xiaoniu88_loan", 
+			phantomjs_config : '--ssl-protocol=any',
+			type:"screenshotJob",
+			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
+			url:"http://www.xiaoniu88.com/portal/myloan",
+			prefixPath:"/tmp/xiaoniu88/loan",
+			width:"1200",
+			height:"1200",
+			lazyTime:"2000",
+			isLogin:false
+		},
+		options: ""
+	}
+).then(function(){
+	console.log("insert the xiaoniu88_loan");
+});
+jobId++;
+
+
+tideDB.getCollection("job").insert(
+	{
+		name:"xiaoniu88_notice", 
+		cron : "0 0 0 */10 * *", 
+		status:"done", 
+		id:jobId + "", 
+		command:"/usr/local/bin/node",
+		arguments: ["/git/node-app-brick/tide/job/screenshotJob.js"] ,
+		type : "lufax.screenshot",
+		jobDetail : {
+	     	jobName:"xiaoniu88_notice", 
+			phantomjs_config : '--ssl-protocol=any',
+			type:"screenshotJob",
+			scriptPath:"/git/node-app-brick/tide/job/script/lufax/index_html.js",
+			url:"http://www.xiaoniu88.com/portal/article/index/2",
+			prefixPath:"/tmp/xiaoniu88/notice",
+			width:"1200",
+			height:"1200",
+			lazyTime:"2000",
+			isLogin:false
+		},
+		options: ""
+	}
+).then(function(){
+	console.log("insert the xiaoniu88_notice");
+});
+jobId++;
